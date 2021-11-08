@@ -1,2 +1,5 @@
-# UnrealProject
-This is Joe Hesketh's and Cristiana Pacheco's repository for their work on re-acquainting themselves with Unreal and C++.
+# Unreal Rogue Like
+Custom Rogue Like made in Unreal through Tom Looman's Professional Game Development in C++ and Unreal Engine course.
+
+## 08/11/2021
+Initial commit of project.
