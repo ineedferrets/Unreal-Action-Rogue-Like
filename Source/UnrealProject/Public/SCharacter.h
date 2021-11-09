@@ -23,7 +23,12 @@ protected:
 	virtual void BeginPlay() override;
 
 	void MoveForward(float value);
+
 	void MoveRight(float value);
+
+	void PrimaryAttack();
+
+	void Jump();
 
 public:	
 	// Called every frame
@@ -39,4 +44,6 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> ProjectileClass;
 };
