@@ -50,6 +50,5 @@ void ASExplosiveBarrel::Tick(float DeltaTime)
 
 void ASExplosiveBarrel::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Impulse firing."));
 	RadialForceComponent->FireImpulse();
 }
