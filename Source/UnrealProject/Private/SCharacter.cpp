@@ -123,43 +123,49 @@ void ASCharacter::SecondaryAttack_TimeElapsed()
 
 void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ProjectileClass)
 {
-	// Get spawn point of projectile from Muzzle socket.
-	FTransform SpawnTM = FTransform(GetControlRotation(), GetMesh()->GetSocketLocation("Muzzle_01"));
+	// Check that an appropriate Projectile Class is used.
+	// NOTE: ensureAlways pauses game in debug/engine always. Not just once like 'ensure'. Also is ignored
+	//		 in game build.
+	if (ensureAlways(ProjectileClass))
+	{
+		// Get spawn point of projectile from Muzzle socket.
+		FTransform SpawnTM = FTransform(GetControlRotation(), GetMesh()->GetSocketLocation("Muzzle_01"));
 
-	// Set to query World Dynamic, World Static, Physics Body, and Pawns
-	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
+		// Set to query World Dynamic, World Static, Physics Body, and Pawns
+		FCollisionObjectQueryParams ObjectQueryParams;
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
 
-	// Line Trace from Camera
-	FHitResult Hit;
-	FVector Start = CameraComp->GetComponentLocation();
-	FVector End = Start + (CameraComp->GetComponentRotation().Vector() * 1000);
-	Start += CameraComp->GetComponentRotation().Vector() * 20;
+		// Line Trace from Camera
+		FHitResult Hit;
+		FVector Start = CameraComp->GetComponentLocation();
+		FVector End = Start + (CameraComp->GetComponentRotation().Vector() * 1000);
+		Start += CameraComp->GetComponentRotation().Vector() * 20;
 
-	bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, ObjectQueryParams);
+		bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, ObjectQueryParams);
 
 
-	// Replace end with impact point if trace hits something
-	if (bBlockingHit)
-		End = Hit.ImpactPoint;
+		// Replace end with impact point if trace hits something
+		if (bBlockingHit)
+			End = Hit.ImpactPoint;
 
-	// Set spawn parameters
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
+		// Set spawn parameters
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.Instigator = this;
 
-	// Update spawn rotation
-	FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(SpawnTM.GetLocation(), End);
-	SpawnTM.SetRotation(TargetRotation.Quaternion());
+		// Update spawn rotation
+		FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(SpawnTM.GetLocation(), End);
+		SpawnTM.SetRotation(TargetRotation.Quaternion());
 
-	// Spawn projectile
-	AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+		// Spawn projectile
+		AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
 
-	// Draw trace from hand (the path the projectile should take)
-	DrawDebugLine(GetWorld(), SpawnTM.GetLocation(), SpawnTM.GetLocation() + (1000 * TargetRotation.Vector()), FColor::Blue, false, 2.0f, 0, 2.0f);
+		// Draw trace from hand (the path the projectile should take)
+		DrawDebugLine(GetWorld(), SpawnTM.GetLocation(), SpawnTM.GetLocation() + (1000 * TargetRotation.Vector()), FColor::Blue, false, 2.0f, 0, 2.0f);
+	}
 }
 
 void ASCharacter::Jump()
@@ -169,7 +175,8 @@ void ASCharacter::Jump()
 
 void ASCharacter::PrimaryInteract()
 {
-	if (InteractionComponent)
+	// Check interaction component is present
+	if (ensureAlways(InteractionComponent))
 	{
 		InteractionComponent->PrimaryInteract();
 	}
