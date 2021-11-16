@@ -4,6 +4,7 @@
 #include "SExplosiveBarrel.h"
 #include "Components/StaticMeshComponent.h"
 #include "PhysicsEngine/RadialForceComponent.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ASExplosiveBarrel::ASExplosiveBarrel()
@@ -51,4 +52,13 @@ void ASExplosiveBarrel::Tick(float DeltaTime)
 void ASExplosiveBarrel::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	RadialForceComponent->FireImpulse();
+
+	// REMEMBER: %s requires an array of FChars, so requires a pointer to the first FChar
+	UE_LOG(LogTemp, Warning, TEXT("OtherActor: %s, at game time: %f"), *GetNameSafe(OtherActor), GetWorld()->TimeSeconds);
+
+	FString CombinedString = FString().Printf(TEXT("Hit at location: %s"), *Hit.ImpactPoint.ToString());
+	DrawDebugString(GetWorld(), Hit.ImpactPoint, CombinedString, nullptr, FColor::Green, 2.0f, true);
+
+	// More details on logging here:
+	// https://nerivec.github.io/old-ue4-wiki/pages/logs-printing-messages-to-yourself-during-runtime.html
 }

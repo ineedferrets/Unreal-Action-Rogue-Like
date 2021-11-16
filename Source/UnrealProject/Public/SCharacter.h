@@ -30,11 +30,22 @@ protected:
 
 	void PrimaryAttack();
 
+	void PrimaryAttack_TimeElapsed();
+
+	void SecondaryAttack();
+
+	void SecondaryAttack_TimeElapsed();
+
 	void Jump();
 
 	void PrimaryInteract();
 
-	void PrimaryAttack_TimeElapsed();
+	void Teleport();
+
+	void Teleport_TimeElapsed();
+
+private:
+	void SpawnProjectile(TSubclassOf<AActor> ProjectileClass);
 
 public:	
 	// Called every frame
@@ -54,7 +65,13 @@ protected:
 	USInteractionComponent* InteractionComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> ProjectileClass;
+	TSubclassOf<AActor> PrimaryProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> SecondaryProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> TeleportProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;

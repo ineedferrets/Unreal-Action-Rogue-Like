@@ -7,6 +7,7 @@
 #include "DrawDebugHelpers.h"
 #include "SInteractionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -69,8 +70,10 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("SecondaryAttack", IE_Pressed, this, &ASCharacter::SecondaryAttack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
+	PlayerInputComponent->BindAction("Teleport", IE_Pressed, this, &ASCharacter::Teleport);
 }
 
 void ASCharacter::MoveForward(float value)
@@ -103,16 +106,61 @@ void ASCharacter::PrimaryAttack()
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
 {
+	SpawnProjectile(PrimaryProjectileClass);
+}
 
+void ASCharacter::SecondaryAttack()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::SecondaryAttack_TimeElapsed, 0.2f);
+}
+
+void ASCharacter::SecondaryAttack_TimeElapsed()
+{
+	SpawnProjectile(SecondaryProjectileClass);
+}
+
+void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ProjectileClass)
+{
+	// Get spawn point of projectile from Muzzle socket.
 	FTransform SpawnTM = FTransform(GetControlRotation(), GetMesh()->GetSocketLocation("Muzzle_01"));
 
+	// Set to query World Dynamic, World Static, Physics Body, and Pawns
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
+
+	// Line Trace from Camera
+	FHitResult Hit;
+	FVector Start = CameraComp->GetComponentLocation();
+	FVector End = Start + (CameraComp->GetComponentRotation().Vector() * 1000);
+	Start += CameraComp->GetComponentRotation().Vector() * 20;
+
+	bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, ObjectQueryParams);
+
+
+	// Replace end with impact point if trace hits something
+	if (bBlockingHit)
+		End = Hit.ImpactPoint;
+
+	// Set spawn parameters
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParams.Instigator = this;
 
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
-}
+	// Update spawn rotation
+	FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(SpawnTM.GetLocation(), End);
+	SpawnTM.SetRotation(TargetRotation.Quaternion());
 
+	// Spawn projectile
+	AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+
+	// Draw trace from hand (the path the projectile should take)
+	DrawDebugLine(GetWorld(), SpawnTM.GetLocation(), SpawnTM.GetLocation() + (1000 * TargetRotation.Vector()), FColor::Blue, false, 2.0f, 0, 2.0f);
+}
 
 void ASCharacter::Jump()
 {
@@ -126,3 +174,16 @@ void ASCharacter::PrimaryInteract()
 		InteractionComponent->PrimaryInteract();
 	}
 }
+
+void ASCharacter::Teleport()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::Teleport_TimeElapsed, 0.2f);
+}
+
+void ASCharacter::Teleport_TimeElapsed()
+{
+	SpawnProjectile(TeleportProjectileClass);
+}
+
