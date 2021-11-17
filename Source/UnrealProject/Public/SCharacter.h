@@ -10,6 +10,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class USInteractionComponent;
 class UAnimMontage;
+class USAttributeComponent;
 
 UCLASS()
 class UNREALPROJECT_API ASCharacter : public ACharacter
@@ -63,6 +64,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	USInteractionComponent* InteractionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USAttributeComponent* AttributeComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> PrimaryProjectileClass;

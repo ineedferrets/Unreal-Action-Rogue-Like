@@ -8,6 +8,7 @@
 #include "SInteractionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "SAttributeComponent.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -23,6 +24,8 @@ ASCharacter::ASCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	InteractionComponent = CreateDefaultSubobject<USInteractionComponent>("InteractionComponent");
+
+	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -63,12 +66,15 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	// Map movement
 	PlayerInputComponent->BindAxis("MoveForward", this, &ASCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ASCharacter::MoveRight);
 
+	// Map camera manipulations
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
+	// Map actions
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
 	PlayerInputComponent->BindAction("SecondaryAttack", IE_Pressed, this, &ASCharacter::SecondaryAttack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
@@ -141,11 +147,11 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ProjectileClass)
 		// Line Trace from Camera
 		FHitResult Hit;
 		FVector Start = CameraComp->GetComponentLocation();
-		FVector End = Start + (CameraComp->GetComponentRotation().Vector() * 1000);
-		Start += CameraComp->GetComponentRotation().Vector() * 20;
-
+		Start += CameraComp->GetComponentRotation().Vector() * 100;
+		FVector End = Start + (CameraComp->GetComponentRotation().Vector() * 5000);
 		bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, ObjectQueryParams);
-
+		FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
+		DrawDebugLine(GetWorld(), Start, End, LineColor, false, 2.0f, 0, 2.0f);
 
 		// Replace end with impact point if trace hits something
 		if (bBlockingHit)
