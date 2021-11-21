@@ -45,6 +45,11 @@ protected:
 
 	void Teleport_TimeElapsed();
 
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth, float Delta);
+
+	virtual void PostInitializeComponents() override;
+
 private:
 	void SpawnProjectile(TSubclassOf<AActor> ProjectileClass);
 
