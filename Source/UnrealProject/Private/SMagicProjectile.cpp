@@ -3,31 +3,30 @@
 
 #include "SMagicProjectile.h"
 #include "Components/SphereComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/AudioComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "SAttributeComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
-ASMagicProjectile::ASMagicProjectile()
+ASMagicProjectile::ASMagicProjectile() : ASBaseProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SphereComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
-	SphereComponent->SetCollisionProfileName("Projectile");
-	SphereComponent->SetCollisionObjectType(ECC_WorldDynamic);
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
-	RootComponent = SphereComponent;
-
-	EffectComponent = CreateDefaultSubobject<UParticleSystemComponent>("EffectComponent");
-	EffectComponent->SetupAttachment(SphereComponent);
-
-	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
-	MovementComponent->InitialSpeed = 1000.0f;
-	MovementComponent->bRotationFollowsVelocity = true;
-	MovementComponent->bInitialVelocityInLocalSpace = true;
-
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>("Audio Component");
+	AudioComponent->SetupAttachment(SphereComponent);
 }
+
+void ASMagicProjectile::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
+	SphereComponent->OnComponentHit.AddDynamic(this, &ASMagicProjectile::OnHit);
+}
+
 
 void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -38,24 +37,25 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		if (AttributeComponent && OtherActor != GetInstigator())
 		{
 			AttributeComponent->ApplyHealthChange(-20.0f);
-
+			PlayImpactEffects();
 			Destroy();
 		}
 	}
 }
 
-
-// Called when the game starts or when spawned
-void ASMagicProjectile::BeginPlay()
+void ASMagicProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Super::BeginPlay();
-	
+	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 10.0f, 12, FColor::Red, false, 2.0f);
+
+	PlayImpactEffects();
+
+	Destroy();
 }
 
-// Called every frame
-void ASMagicProjectile::Tick(float DeltaTime)
+
+void ASMagicProjectile::PlayImpactEffects()
 {
-	Super::Tick(DeltaTime);
-
+	FTransform EmitterTransform = GetActorTransform();
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEmitter, EmitterTransform);
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, EmitterTransform.GetLocation());
 }
-

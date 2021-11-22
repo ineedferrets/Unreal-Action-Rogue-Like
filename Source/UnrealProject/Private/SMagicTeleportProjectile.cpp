@@ -2,12 +2,12 @@
 
 
 #include "SMagicTeleportProjectile.h"
-
+#include "SBaseProjectile.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-ASMagicTeleportProjectile::ASMagicTeleportProjectile() : ASMagicProjectile()
+ASMagicTeleportProjectile::ASMagicTeleportProjectile() : ASBaseProjectile()
 {
 
 }

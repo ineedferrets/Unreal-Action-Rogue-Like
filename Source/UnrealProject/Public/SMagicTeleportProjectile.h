@@ -3,14 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMagicProjectile.h"
+#include "SBaseProjectile.h"
 #include "SMagicTeleportProjectile.generated.h"
 
-/**
- * 
- */
 UCLASS()
-class UNREALPROJECT_API ASMagicTeleportProjectile : public ASMagicProjectile
+class UNREALPROJECT_API ASMagicTeleportProjectile : public ASBaseProjectile
 {
 	GENERATED_BODY()
 

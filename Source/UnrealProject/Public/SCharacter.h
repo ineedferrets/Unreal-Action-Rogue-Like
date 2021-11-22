@@ -37,8 +37,6 @@ protected:
 
 	void SecondaryAttack_TimeElapsed();
 
-	void Jump();
-
 	void PrimaryInteract();
 
 	void Teleport();

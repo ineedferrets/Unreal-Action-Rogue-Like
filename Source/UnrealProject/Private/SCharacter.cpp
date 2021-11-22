@@ -182,11 +182,6 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ProjectileClass)
 	}
 }
 
-void ASCharacter::Jump()
-{
-	GetCharacterMovement()->DoJump(false);
-}
-
 void ASCharacter::PrimaryInteract()
 {
 	// Check interaction component is present
@@ -210,6 +205,14 @@ void ASCharacter::Teleport_TimeElapsed()
 
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth, float Delta)
 {
+	if (Delta < 0)
+	{
+		AActor* ThisActor = Cast<AActor>(this);
+		UStaticMeshComponent* MeshComponent = FindComponentByClass<UStaticMeshComponent>();
+		if (MeshComponent)
+			MeshComponent->SetScalarParameterValueOnMaterials("HitFlashTime", GetWorld()->TimeSeconds);
+	}
+
 	if (NewHealth <= 0.0f && Delta < 0.0f)
 	{
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());

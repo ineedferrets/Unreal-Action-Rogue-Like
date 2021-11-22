@@ -4,14 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "SBaseProjectile.h"
 #include "SMagicProjectile.generated.h"
 
 class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
+class UAudioComponent;
+class USoundBase;
 
 UCLASS()
-class UNREALPROJECT_API ASMagicProjectile : public AActor
+class UNREALPROJECT_API ASMagicProjectile : public ASBaseProjectile
 {
 	GENERATED_BODY()
 
@@ -23,22 +26,22 @@ protected:
 	UFUNCTION()
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 
-protected:
+	virtual void PostInitializeComponents() override;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	USphereComponent* SphereComponent;
+	UPROPERTY(EditAnywhere, Category = "Magic Projectile")
+	UParticleSystem* ImpactEmitter;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	UProjectileMovementComponent* MovementComponent;
+	UPROPERTY(EditAnywhere, Category = "Magic Projectile")
+	USoundBase* ImpactSound;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	UParticleSystemComponent* EffectComponent;
+	UPROPERTY(VisibleAnywhere, Category = "Magic Projectile")
+	UAudioComponent* AudioComponent;
+
+private:
+
+	void PlayImpactEffects();
 };
