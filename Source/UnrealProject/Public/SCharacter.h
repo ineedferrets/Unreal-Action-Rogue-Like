@@ -11,6 +11,7 @@ class USpringArmComponent;
 class USInteractionComponent;
 class UAnimMontage;
 class USAttributeComponent;
+class UParticleSystem;
 
 UCLASS()
 class UNREALPROJECT_API ASCharacter : public ACharacter
@@ -79,6 +80,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> TeleportProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	UParticleSystem* MuzzleFlash;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;

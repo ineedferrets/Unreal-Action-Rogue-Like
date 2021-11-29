@@ -8,6 +8,7 @@
 #include "SInteractionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "SAttributeComponent.h"
 
 // Sets default values
@@ -176,6 +177,9 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ProjectileClass)
 
 		// Spawn projectile
 		AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+
+		// Spawn Emitter
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SpawnTM);
 
 		// Draw trace from hand (the path the projectile should take)
 		DrawDebugLine(GetWorld(), SpawnTM.GetLocation(), SpawnTM.GetLocation() + (1000 * TargetRotation.Vector()), FColor::Blue, false, 2.0f, 0, 2.0f);

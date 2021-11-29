@@ -8,6 +8,7 @@
 #include "SAttributeComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+//#include "GameplayCameras/MatineeShakeBase.h"
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile() : ASBaseProjectile()
