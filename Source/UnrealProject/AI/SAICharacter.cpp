@@ -6,11 +6,13 @@
 #include "AIController.h"
 #include "DrawDebugHelpers.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "SAttributeComponent.h"
 
 // Sets default values
 ASAICharacter::ASAICharacter()
 {
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComponent");
+	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
 }
 
 void ASAICharacter::PostInitializeComponents()
