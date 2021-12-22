@@ -3,14 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SGameplayInterface.h"
-#include "GameFramework/Actor.h"
+#include "SPowerUPActor.h"
 #include "SHealthPotion.generated.h"
 
 class UStaticMeshComponent;
 
 UCLASS()
-class UNREALPROJECT_API ASHealthPotion : public AActor, public ISGameplayInterface
+class UNREALPROJECT_API ASHealthPotion : public ASPowerUPActor
 {
 	GENERATED_BODY()
 
@@ -21,29 +20,11 @@ public:
 	ASHealthPotion();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	void OnTimer_HealthInactiveElapsed();
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-protected:
 
 	UPROPERTY(EditAnywhere)
 	float HealthIncrease = 20.0f;
 
-	UPROPERTY(EditAnywhere)
-	float RespawnTimer = 10.0f;
-
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BaseMesh;
-
-	UPROPERTY(VisibleAnywhere)
-	bool bCanBeInteractedWith = true;
-private:
-	FTimerHandle TimerHandle_HealthInactive;
 
 };

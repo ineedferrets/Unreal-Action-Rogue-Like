@@ -4,13 +4,9 @@
 #include "SMagicTeleportProjectile.h"
 #include "SBaseProjectile.h"
 #include "Components/SphereComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-ASMagicTeleportProjectile::ASMagicTeleportProjectile() : ASBaseProjectile()
-{
-
-}
+ASMagicTeleportProjectile::ASMagicTeleportProjectile() : ASBaseProjectile() {}
 
 void ASMagicTeleportProjectile::PostInitializeComponents()
 {
@@ -28,22 +24,7 @@ void ASMagicTeleportProjectile::BeginPlay()
 	SphereComponent->IgnoreActorWhenMoving(GetInstigator(), true);
 
 	// Start timer for detonation
-	GetWorldTimerManager().SetTimer(TimerHandle_Teleportation, this, &ASMagicTeleportProjectile::Detonate, TeleportationTime / 2);
-}
-
-void ASMagicTeleportProjectile::Detonate()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Detonation of Teleportation Projectile called."));
-
-	FTransform EmitterTransform = GetActorTransform();
-	// Play emitter
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEmitter, EmitterTransform, true);
-
-	// Stop movement
-	MovementComponent->StopMovementImmediately();
-
-	// Start timer for teleportation
-	GetWorldTimerManager().SetTimer(TimerHandle_Teleportation, this, &ASMagicTeleportProjectile::Teleport, TeleportationTime / 2);
+	GetWorldTimerManager().SetTimer(TimerHandle_Teleportation, this, &ASMagicTeleportProjectile::Teleport, TeleportationTime);
 }
 
 void ASMagicTeleportProjectile::Teleport()
@@ -57,12 +38,11 @@ void ASMagicTeleportProjectile::Teleport()
 	if (OriginalInstigator)
 		OriginalInstigator->TeleportTo(PlayerLocation, PlayerRotation);
 
-	// Destroy actor
-	Destroy();
+	Explode_Implementation();
 }
 
 void ASMagicTeleportProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	GetWorldTimerManager().ClearTimer(TimerHandle_Teleportation);
-	Detonate();
+	Teleport();
 }

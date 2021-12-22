@@ -3,15 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
 #include "SBaseProjectile.h"
 #include "SMagicProjectile.generated.h"
-
-class USphereComponent;
-class UProjectileMovementComponent;
-class UParticleSystemComponent;
-class UAudioComponent;
-class USoundBase;
 
 UCLASS()
 class UNREALPROJECT_API ASMagicProjectile : public ASBaseProjectile
@@ -31,17 +24,4 @@ protected:
 
 
 	virtual void PostInitializeComponents() override;
-
-	UPROPERTY(EditAnywhere, Category = "Magic Projectile")
-	UParticleSystem* ImpactEmitter;
-
-	UPROPERTY(EditAnywhere, Category = "Magic Projectile")
-	USoundBase* ImpactSound;
-
-	UPROPERTY(VisibleAnywhere, Category = "Magic Projectile")
-	UAudioComponent* AudioComponent;
-
-private:
-
-	void PlayImpactEffects();
 };

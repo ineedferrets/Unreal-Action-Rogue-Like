@@ -3,21 +3,14 @@
 
 #include "SMagicProjectile.h"
 #include "Components/SphereComponent.h"
-#include "Components/AudioComponent.h"
-#include "Particles/ParticleSystemComponent.h"
 #include "SAttributeComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
-//#include "GameplayCameras/MatineeShakeBase.h"
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile() : ASBaseProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	AudioComponent = CreateDefaultSubobject<UAudioComponent>("Audio Component");
-	AudioComponent->SetupAttachment(SphereComponent);
 }
 
 void ASMagicProjectile::PostInitializeComponents()
@@ -38,8 +31,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		if (AttributeComponent && OtherActor != GetInstigator())
 		{
 			AttributeComponent->ApplyHealthChange(-20.0f);
-			PlayImpactEffects();
-			Destroy();
+			Explode_Implementation();
 		}
 	}
 }
@@ -48,15 +40,5 @@ void ASMagicProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 {
 	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 10.0f, 12, FColor::Red, false, 2.0f);
 
-	PlayImpactEffects();
-
-	Destroy();
-}
-
-
-void ASMagicProjectile::PlayImpactEffects()
-{
-	FTransform EmitterTransform = GetActorTransform();
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEmitter, EmitterTransform);
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, EmitterTransform.GetLocation());
+	Explode_Implementation();
 }

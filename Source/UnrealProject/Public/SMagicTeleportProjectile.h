@@ -19,8 +19,6 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	void Detonate();
-
 	void Teleport();
 
 	virtual void PostInitializeComponents() override;
@@ -31,9 +29,6 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Teleportation")
 	float TeleportationTime = 0.4f;
-
-	UPROPERTY(EditAnywhere, Category = "Teleportation")
-	UParticleSystem* ExplosionEmitter;
 
 	FTimerHandle TimerHandle_Teleportation;
 };
