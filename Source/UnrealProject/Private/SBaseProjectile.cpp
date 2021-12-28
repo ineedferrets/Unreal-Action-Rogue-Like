@@ -24,7 +24,7 @@ ASBaseProjectile::ASBaseProjectile()
 	RootComponent = SphereComponent;
 
 	EffectComponent = CreateDefaultSubobject<UParticleSystemComponent>("EffectComponent");
-	EffectComponent->SetupAttachment(SphereComponent);
+	EffectComponent->SetupAttachment(RootComponent);
 
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>("AudioComponent");
 	AudioComponent->SetupAttachment(RootComponent);

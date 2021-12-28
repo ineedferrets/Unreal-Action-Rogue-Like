@@ -22,6 +22,9 @@ protected:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-
 	virtual void PostInitializeComponents() override;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	float DamageOnImpact = 20.0f;
 };
