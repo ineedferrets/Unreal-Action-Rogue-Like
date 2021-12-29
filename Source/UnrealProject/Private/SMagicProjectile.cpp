@@ -26,11 +26,12 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	if (OtherActor)
 	{
-		USAttributeComponent* AttributeComponent = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributes(OtherActor);
 
 		if (AttributeComponent && OtherActor != GetInstigator())
 		{
-			AttributeComponent->ApplyHealthChange(-1 * DamageOnImpact);
+			AttributeComponent->ApplyHealthChange(GetInstigator(), -1 * DamageOnImpact);
+
 			Explode_Implementation();
 		}
 	}

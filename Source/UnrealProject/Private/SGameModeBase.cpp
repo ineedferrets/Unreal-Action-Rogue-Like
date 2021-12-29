@@ -29,7 +29,7 @@ void ASGameModeBase::SpawnBotTimerElapsed()
 	{
 		ASAICharacter* Bot = *It;
 
-		USAttributeComponent* AttributeComponent = Cast<USAttributeComponent>(Bot->GetComponentByClass(USAttributeComponent::StaticClass()));
+		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributes(Bot);
 
 		if (ensure(AttributeComponent) && AttributeComponent->IsAlive())
 			NrOfAliveBots++;

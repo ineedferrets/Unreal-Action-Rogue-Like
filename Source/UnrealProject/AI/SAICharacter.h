@@ -19,6 +19,9 @@ public:
 	ASAICharacter();
 
 protected:
+
+	void SetTargetActor(AActor* NewTarget);
+
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
 
@@ -33,5 +36,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	USAttributeComponent* AttributeComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
+	FName TimeToHitParamName;
 
 };

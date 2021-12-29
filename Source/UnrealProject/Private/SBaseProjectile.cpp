@@ -30,7 +30,7 @@ ASBaseProjectile::ASBaseProjectile()
 	AudioComponent->SetupAttachment(RootComponent);
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
-	MovementComponent->InitialSpeed = ParticleVelocity;
+	MovementComponent->InitialSpeed = 1000.0f;
 	MovementComponent->bRotationFollowsVelocity = true;
 	MovementComponent->bInitialVelocityInLocalSpace = true;
 	MovementComponent->ProjectileGravityScale = 0.0f;

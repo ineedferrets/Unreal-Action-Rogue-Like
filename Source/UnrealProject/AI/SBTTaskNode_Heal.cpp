@@ -23,10 +23,10 @@ EBTNodeResult::Type USBTTaskNode_Heal::ExecuteTask(UBehaviorTreeComponent& Owner
 			return EBTNodeResult::Failed;
 		}
 
-		USAttributeComponent* AttributeComponent = Cast<USAttributeComponent>(AIPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
+		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributes(AIPawn);
 		if (ensure(AttributeComponent))
 		{
-			AttributeComponent->ApplyHealthChange(AmountToHeal);
+			AttributeComponent->ApplyHealthChange(AIPawn, AmountToHeal);
 			return EBTNodeResult::Succeeded;
 		}
 	}

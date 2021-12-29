@@ -45,9 +45,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	USoundCue* ImpactSound;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	float ParticleVelocity = 1000.0f;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Effects|Shake")
 	TSubclassOf<UCameraShakeBase> ImpactShake;
 
