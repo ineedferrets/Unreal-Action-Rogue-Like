@@ -74,3 +74,16 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 		DrawDebugSphere(GetWorld(), Locations[0], 50.0f, 20, FColor::Blue, false, 60.0f);
 	}
 }
+
+void ASGameModeBase::KillAll()
+{
+	for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
+	{
+		ASAICharacter* Bot = *It;
+
+		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributes(Bot);
+
+		if (ensure(AttributeComponent) && AttributeComponent->IsAlive())
+			AttributeComponent->Kill(this); // @todo: Pass in player? For kill credits.
+	}
+}

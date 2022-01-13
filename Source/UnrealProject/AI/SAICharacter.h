@@ -8,6 +8,8 @@
 
 class UPawnSensingComponent;
 class USAttributeComponent;
+class UUSerWidget;
+class USWorldUserWidget;
 
 UCLASS()
 class UNREALPROJECT_API ASAICharacter : public ACharacter
@@ -19,6 +21,11 @@ public:
 	ASAICharacter();
 
 protected:
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetClass;
+
+	USWorldUserWidget* ActiveHealthBar;
 
 	void SetTargetActor(AActor* NewTarget);
 

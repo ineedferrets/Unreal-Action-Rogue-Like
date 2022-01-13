@@ -223,3 +223,8 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 		DisableInput(PlayerController);
 	}
 }
+
+void ASCharacter::HealSelf(float Amount /* = 100 */)
+{
+	AttributeComponent->ApplyHealthChange(this, Amount);
+}
