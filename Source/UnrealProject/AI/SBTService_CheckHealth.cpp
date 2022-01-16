@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "SBTService_CheckHealth.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -23,10 +20,12 @@ void USBTService_CheckHealth::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 				USAttributeComponent* AttributeComponent = Cast<USAttributeComponent>(AIPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
 				if (ensure(AttributeComponent))
 				{
+					// Checks health.
 					float CurrentHealth = AttributeComponent->ReturnCurrentHealth();
 					float MaxHealth = AttributeComponent->ReturnMaxHealth();
 					bool LowHealth = CurrentHealth <= MaxHealth * LowHealthPercentage;
 
+					// Changes blackboard values.
 					BlackboardComponent->SetValueAsBool(IsLowHealth.SelectedKeyName, LowHealth);
 					BlackboardComponent->SetValueAsBool(IsMaxHealth.SelectedKeyName, AttributeComponent->IsMaxHealth());
 				}

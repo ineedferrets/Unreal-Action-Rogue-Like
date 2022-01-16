@@ -1,10 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "SHealthPotion.h"
 #include "SAttributeComponent.h"
 
-// Sets default values
+// Implement components and set default values.
 ASHealthPotion::ASHealthPotion()
 {
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
@@ -27,7 +24,7 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	{
 		if (AttributeComponent->ApplyHealthChange(this, HealthIncrease))
 		{
-			HideAndCooldownPowerup();
+			HideAndCooldownPowerUp();
 		}
 	}
 }

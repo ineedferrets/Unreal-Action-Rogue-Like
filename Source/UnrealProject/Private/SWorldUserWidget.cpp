@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "SWorldUserWidget.h"
 #include "Components/SizeBox.h"
 #include "Blueprint/WidgetLayoutLibrary.h"

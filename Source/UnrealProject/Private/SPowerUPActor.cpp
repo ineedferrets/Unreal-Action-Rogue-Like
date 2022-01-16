@@ -1,38 +1,38 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "SPowerUPActor.h"
-
+#include "SPowerUpActor.h"
 #include "Components/SphereComponent.h"
 
+#pragma region Initialisation
 // Sets default values
-ASPowerUPActor::ASPowerUPActor()
+ASPowerUpActor::ASPowerUpActor()
 {
 	SphereComponent = CreateAbstractDefaultSubobject<USphereComponent>("SphereComponent");
 	SphereComponent->SetCollisionProfileName("Powerup");
 	RootComponent = SphereComponent;
 }
+#pragma endregion Initialisation
 
-void ASPowerUPActor::Interact_Implementation(APawn* InstigatorPawn)
+void ASPowerUpActor::Interact_Implementation(APawn* InstigatorPawn)
 {
 	// Logic in derived classes!
 }
 
-void ASPowerUPActor::ShowPowerup()
+#pragma region General PowerUp Functionality
+void ASPowerUpActor::ShowPowerUp()
 {
-	SetPowerupState(true);
+	SetPowerUpState(true);
 }
 
-void ASPowerUPActor::HideAndCooldownPowerup()
+void ASPowerUpActor::HideAndCooldownPowerUp()
 {
-	SetPowerupState(false);
+	SetPowerUpState(false);
 
-	GetWorldTimerManager().SetTimer(TimerHandle_RespawnTimer, this, &ASPowerUPActor::ShowPowerup, RespawnTime);
+	GetWorldTimerManager().SetTimer(TimerHandle_RespawnTimer, this, &ASPowerUpActor::ShowPowerUp, RespawnTime);
 }
 
-void ASPowerUPActor::SetPowerupState(bool bNewIsActive)
+void ASPowerUpActor::SetPowerUpState(bool bNewIsActive)
 {
 	SetActorEnableCollision(bNewIsActive);
 
 	RootComponent->SetVisibility(bNewIsActive, true);
 }
+#pragma endregion General PowerUpFunctionality

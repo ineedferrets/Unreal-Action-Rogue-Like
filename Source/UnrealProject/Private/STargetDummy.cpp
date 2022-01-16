@@ -1,9 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "STargetDummy.h"
 #include "SAttributeComponent.h"
 
+#pragma region Initialisation
 // Sets default values
 ASTargetDummy::ASTargetDummy()
 {
@@ -18,6 +16,7 @@ ASTargetDummy::ASTargetDummy()
 	AttributeComponent->OnHealthChanged.AddDynamic(this, &ASTargetDummy::OnHealthChanged);
 
 }
+#pragma endregion Initialisation
 
 void ASTargetDummy::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth, float Delta)
 {

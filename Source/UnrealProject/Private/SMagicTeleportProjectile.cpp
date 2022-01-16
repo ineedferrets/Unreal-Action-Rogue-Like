@@ -1,11 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "SMagicTeleportProjectile.h"
 #include "SBaseProjectile.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+#pragma region Initialisation
 ASMagicTeleportProjectile::ASMagicTeleportProjectile() : ASBaseProjectile() {}
 
 void ASMagicTeleportProjectile::PostInitializeComponents()
@@ -26,6 +24,7 @@ void ASMagicTeleportProjectile::BeginPlay()
 	// Start timer for detonation
 	GetWorldTimerManager().SetTimer(TimerHandle_Teleportation, this, &ASMagicTeleportProjectile::Teleport, TeleportationTime);
 }
+#pragma region Initialisation
 
 void ASMagicTeleportProjectile::Teleport()
 {

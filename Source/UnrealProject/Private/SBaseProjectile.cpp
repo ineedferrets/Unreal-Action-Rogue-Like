@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "SBaseProjectile.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
@@ -8,7 +5,6 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
-#include "Camera/CameraShakeBase.h"
 
 
 // Sets default values

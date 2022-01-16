@@ -1,11 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "SAIController.h"
-
-#include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+#pragma region Initialisation
 void ASAIController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -16,5 +12,4 @@ void ASAIController::BeginPlay()
 		RunBehaviorTree(BehaviorTree);
 	}
 }
-
-
+#pragma endregion Initialisation

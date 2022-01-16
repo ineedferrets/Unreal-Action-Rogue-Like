@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -9,25 +7,30 @@
 
 class USphereComponent;
 
+/*
+ * Base class for any power ups.
+ */
 
-UCLASS()
-class UNREALPROJECT_API ASPowerUPActor : public AActor, public ISGameplayInterface
+UCLASS(Abstract)
+class UNREALPROJECT_API ASPowerUpActor : public AActor, public ISGameplayInterface
 {
 	GENERATED_BODY()
 
+#pragma region Methods
 	void Interact_Implementation(APawn* InstigatorPawn) override;
 	
 public:	
-	// Sets default values for this actor's properties
-	ASPowerUPActor();
+	ASPowerUpActor();
 
 protected:
-	void ShowPowerup();
+	void ShowPowerUp();
 
-	void HideAndCooldownPowerup();
+	void HideAndCooldownPowerUp();
 
-	void SetPowerupState(bool bNewIsActive);
+	void SetPowerUpState(bool bNewIsActive);
+#pragma endregion Methods
 
+#pragma region Properties
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* SphereComponent;
@@ -36,5 +39,5 @@ protected:
 	float RespawnTime = 10.0f;
 
 	FTimerHandle TimerHandle_RespawnTimer;
-
+#pragma endregion Properties
 };

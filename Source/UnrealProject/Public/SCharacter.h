@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,6 +11,10 @@ class UAnimMontage;
 class USAttributeComponent;
 class UParticleSystem;
 
+/*
+ * Base character class for player controlled actors.
+ */
+
 UCLASS()
 class UNREALPROJECT_API ASCharacter : public ACharacter
 {
@@ -22,9 +24,9 @@ public:
 	// Sets default values for this character's properties
 	ASCharacter();
 
+#pragma region Methods
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 	void MoveForward(float value);
 
@@ -47,21 +49,21 @@ protected:
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth, float Delta);
 
-	virtual void PostInitializeComponents() override;
-
 private:
 	void SpawnProjectile(TSubclassOf<AActor> ProjectileClass);
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(Exec)
 	void HealSelf(float Amount = 100);
 
+	FVector GetPawnViewLocation() const override;
+#pragma endregion Methods
+
+#pragma region Properties
 protected:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComp;
@@ -91,4 +93,5 @@ protected:
 	UAnimMontage* AttackAnim;
 
 	FTimerHandle TimerHandle_PrimaryAttack;
+#pragma endregion Properties
 };

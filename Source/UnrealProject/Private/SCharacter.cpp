@@ -1,6 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
+#pragma region Includes
 #include "SCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -10,12 +8,24 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "SAttributeComponent.h"
+#pragma endregion Includes
 
-// Sets default values
+#pragma region Console Variables
+static TAutoConsoleVariable<bool> CVarDebugDrawView(TEXT("jh.PlayerViewDebugDraw"), false, TEXT("Enable Debug Arrows for Player and Character View."), ECVF_Cheat);
+#pragma endregion Console Variables
+
+#pragma region Initialisation
+// Set default values and implement components
 ASCharacter::ASCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	// Set this character to call Tick() every frame.
+ 	// You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Set rotation of character based on movement rather than camera (upper body rotated through animation blueprint).
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	bUseControllerRotationYaw = false;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
 	SpringArmComp->bUsePawnControlRotation = true;
@@ -25,50 +35,16 @@ ASCharacter::ASCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	InteractionComponent = CreateDefaultSubobject<USInteractionComponent>("InteractionComponent");
-
 	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>("AttributeComponent");
-
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-
-	bUseControllerRotationYaw = false;
 }
 
-// Called when the game starts or when spawned
-void ASCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ASCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	// -- Rotation Visualization -- //
-	const float DrawScale = 100.0f;
-	const float Thickness = 5.0f;
-
-	FVector LineStart = GetActorLocation();
-	// Offset to the right of pawn
-	LineStart += GetActorRightVector() * 100.0f;
-	// Set line end in direction of the actor's forward
-	FVector ActorDirection_LineEnd = LineStart + (GetActorForwardVector() * 100.0f);
-	// Draw Actor's Direction
-	DrawDebugDirectionalArrow(GetWorld(), LineStart, ActorDirection_LineEnd, DrawScale, FColor::Yellow, false, 0.0f, 0, Thickness);
-
-	FVector ControllerDirection_LineEnd = LineStart + (GetControlRotation().Vector() * 100.0f);
-	// Draw 'Controller' Rotation ('PlayerController' that 'possessed' this character)
-	DrawDebugDirectionalArrow(GetWorld(), LineStart, ControllerDirection_LineEnd, DrawScale, FColor::Green, false, 0.0f, 0, Thickness);
-}
-
+// Bind events post construction.
 void ASCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
 	AttributeComponent->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
 }
-
 
 // Called to bind functionality to input
 void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -90,7 +66,32 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 	PlayerInputComponent->BindAction("Teleport", IE_Pressed, this, &ASCharacter::Teleport);
 }
+#pragma endregion Initialisation
 
+void ASCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// Rotation Visualization
+	bool bDebugDrawView = CVarDebugDrawView.GetValueOnGameThread();
+	if (bDebugDrawView)
+	{
+		const float DrawScale = 100.0f;
+		const float Thickness = 5.0f;
+		FVector LineStart = GetActorLocation();
+		LineStart += GetActorRightVector() * 100.0f;
+
+		// Draw Actor's Direction
+		FVector ActorDirection_LineEnd = LineStart + (GetActorForwardVector() * 100.0f);
+		DrawDebugDirectionalArrow(GetWorld(), LineStart, ActorDirection_LineEnd, DrawScale, FColor::Yellow, false, 0.0f, 0, Thickness);
+
+		// Draw 'Controller' Rotation ('PlayerController' that 'possessed' this character)
+		FVector ControllerDirection_LineEnd = LineStart + (GetControlRotation().Vector() * 100.0f);
+		DrawDebugDirectionalArrow(GetWorld(), LineStart, ControllerDirection_LineEnd, DrawScale, FColor::Green, false, 0.0f, 0, Thickness);
+	}
+}
+
+#pragma region Movement
 void ASCharacter::MoveForward(float value)
 {
 	FRotator ControlRotation = GetControlRotation();
@@ -110,13 +111,14 @@ void ASCharacter::MoveRight(float value)
 
 	AddMovementInput(RightVector, value);
 }
+#pragma endregion Movement
 
+#pragma region Abilities
 void ASCharacter::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
 
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.2f);
-
 }
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
@@ -206,25 +208,36 @@ void ASCharacter::Teleport_TimeElapsed()
 {
 	SpawnProjectile(TeleportProjectileClass);
 }
+#pragma endregion Abilities
 
+#pragma region Health
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth, float Delta)
 {
+	// If health change is damaging.
 	if (Delta < 0)
 	{
 		AActor* ThisActor = Cast<AActor>(this);
 		UStaticMeshComponent* MeshComponent = FindComponentByClass<UStaticMeshComponent>();
 		if (MeshComponent)
 			MeshComponent->SetScalarParameterValueOnMaterials("HitFlashTime", GetWorld()->TimeSeconds);
-	}
 
-	if (NewHealth <= 0.0f && Delta < 0.0f)
-	{
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
-		DisableInput(PlayerController);
+		// If health change kills player.
+		if (NewHealth <= 0.0f)
+		{
+			APlayerController* PlayerController = Cast<APlayerController>(GetController());
+			DisableInput(PlayerController);
+		}
 	}
 }
 
+// NOTE: Currently only usable through console. Could be new ability?
 void ASCharacter::HealSelf(float Amount /* = 100 */)
 {
 	AttributeComponent->ApplyHealthChange(this, Amount);
+}
+#pragma endregion Health
+
+FVector ASCharacter::GetPawnViewLocation() const
+{
+	return CameraComp->GetComponentLocation();
 }

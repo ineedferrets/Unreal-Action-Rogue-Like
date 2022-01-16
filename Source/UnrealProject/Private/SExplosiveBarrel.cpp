@@ -6,10 +6,10 @@
 #include "PhysicsEngine/RadialForceComponent.h"
 #include "DrawDebugHelpers.h"
 
-// Sets default values
+#pragma region Initialisation
+// Sets default values and implements components.
 ASExplosiveBarrel::ASExplosiveBarrel()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
@@ -18,13 +18,10 @@ ASExplosiveBarrel::ASExplosiveBarrel()
 
 	RadialForceComponent = CreateDefaultSubobject<URadialForceComponent>("RadialForce");
 	RadialForceComponent->SetupAttachment(StaticMeshComponent);
-
 	RadialForceComponent->SetAutoActivate(false);
-
 	RadialForceComponent->Radius = 750.0f;
 	RadialForceComponent->ImpulseStrength = 2500.0f;
 	RadialForceComponent->bImpulseVelChange = true;
-
 	RadialForceComponent->AddCollisionChannelToAffect(ECC_WorldDynamic);
 }
 
@@ -34,20 +31,8 @@ void ASExplosiveBarrel::PostInitializeComponents()
 
 	StaticMeshComponent->OnComponentHit.AddDynamic(this, &ASExplosiveBarrel::OnHit);
 }
+#pragma endregion Initialisation
 
-// Called when the game starts or when spawned
-void ASExplosiveBarrel::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ASExplosiveBarrel::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
 void ASExplosiveBarrel::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {

@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -11,6 +9,12 @@ class USAttributeComponent;
 class UUSerWidget;
 class USWorldUserWidget;
 
+/**
+ *	Base AI character for this project's game.
+ *
+ *	All AI characters must be children of this class.
+ */
+
 UCLASS()
 class UNREALPROJECT_API ASAICharacter : public ACharacter
 {
@@ -20,6 +24,7 @@ public:
 	// Sets default values for this character's properties
 	ASAICharacter();
 
+#pragma region Methods
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -36,7 +41,9 @@ protected:
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+#pragma endregion Methods
 
+#pragma region Properties
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPawnSensingComponent* PawnSensingComponent;
@@ -46,5 +53,5 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	FName TimeToHitParamName;
-
+#pragma endregion Properties
 };

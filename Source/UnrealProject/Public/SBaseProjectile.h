@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,20 +11,26 @@ class UAudioComponent;
 class USoundCue;
 class UCameraShakeBase;
 
+/*
+ * The base class for projectiles in this project's game.
+ */
+
 UCLASS(ABSTRACT) // ABSTRACT marks as incomplete, and prevents certain dropdowns showing this.
 class UNREALPROJECT_API ASBaseProjectile : public AActor
 {
 	GENERATED_BODY()
-	
+
+#pragma region Methods
 public:	
 	// Sets default values for this actor's properties
 	ASBaseProjectile();
 
 protected:
 	void Explode_Implementation();
+#pragma endregion Methods
 
+#pragma region Properties
 protected:
-
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	USphereComponent* SphereComponent;
 
@@ -53,5 +57,5 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Effects|Shake")
 	float ImpactShakeOuterRadius = 500.0f;
-
+#pragma endregion Properties
 };

@@ -1,7 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
-
 #include "SBTService_CheckAttackRange.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -24,10 +20,11 @@ void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 				APawn* AIPawn = AIController->GetPawn();
 				if (ensure(AIPawn))
 				{
+					// Check target is within range.
 					float Distance = FVector::Distance(TargetActor->GetActorLocation(), AIPawn->GetActorLocation());
-
 					bool bWithinRange = Distance < AttackRange;
 
+					// Check target is in line of sight (LOS) if in range.
 					bool bHasLOS = false;
 					if (bWithinRange)
 					{
@@ -40,5 +37,4 @@ void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		}
 	}
 
-	// Line of sight check
 }

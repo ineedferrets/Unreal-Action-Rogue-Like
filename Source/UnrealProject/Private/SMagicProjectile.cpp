@@ -1,11 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "SMagicProjectile.h"
 #include "Components/SphereComponent.h"
-#include "SAttributeComponent.h"
 #include "DrawDebugHelpers.h"
+#include "SGameplayFunctionLibrary.h"
 
+#pragma region Initialisation
 // Sets default values
 ASMagicProjectile::ASMagicProjectile() : ASBaseProjectile()
 {
@@ -20,18 +18,15 @@ void ASMagicProjectile::PostInitializeComponents()
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
 	SphereComponent->OnComponentHit.AddDynamic(this, &ASMagicProjectile::OnHit);
 }
+#pragma endregion Initialisation
 
-
+#pragma region Collisions
 void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor)
+	if (OtherActor && OtherActor != GetInstigator())
 	{
-		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributes(OtherActor);
-
-		if (AttributeComponent && OtherActor != GetInstigator())
+		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageOnImpact, SweepResult))
 		{
-			AttributeComponent->ApplyHealthChange(GetInstigator(), -1 * DamageOnImpact);
-
 			Explode_Implementation();
 		}
 	}
@@ -43,3 +38,4 @@ void ASMagicProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 
 	Explode_Implementation();
 }
+#pragma endregion Collisions

@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -8,17 +6,22 @@
 
 class USAttributeComponent;
 
+/*
+ * Target dummy actor to check implementation of material changes on damage taken.
+ */
+
 UCLASS()
 class UNREALPROJECT_API ASTargetDummy : public AActor
 {
 	GENERATED_BODY()
-	
+
+#pragma region Methods
 public:	
-	// Sets default values for this actor's properties
 	ASTargetDummy();
+#pragma endregion Methods
 
+#pragma region Properties
 protected:
-
 	UPROPERTY(VisibleAnywhere)
 	USAttributeComponent* AttributeComponent;
 
@@ -27,5 +30,5 @@ protected:
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComponent, float NewHealth, float Delta);
-
+#pragma endregion Properties
 };

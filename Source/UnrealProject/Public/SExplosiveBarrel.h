@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -9,32 +7,32 @@
 class UStaticMeshComponent;
 class URadialForceComponent;
 
+/*
+ * Actor class for an exploding barrel.
+ */
+
 UCLASS()
 class UNREALPROJECT_API ASExplosiveBarrel : public AActor
 {
 	GENERATED_BODY()
-	
+
+#pragma region Methods
 public:	
-	// Sets default values for this actor's properties
 	ASExplosiveBarrel();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	virtual void PostInitializeComponents() override;
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+#pragma endregion Methods
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+#pragma region Properties
 protected:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* StaticMeshComponent;
 
 	UPROPERTY(VisibleAnywhere)
 	URadialForceComponent* RadialForceComponent;
+#pragma endregion Properties
 };
